@@ -3,7 +3,7 @@ from pong import driver
 from pong import disp_title_screen
 
 #Set basepath
-basepath = os.path.dirname(os.path.realpath(__file__))+'\\'
+basepath = os.path.dirname(os.path.realpath(__file__))+os.path.sep
 os.chdir(basepath)
 
 #Initialize pygame
