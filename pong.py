@@ -11,28 +11,28 @@ def disp_title_screen(screen, width, height):
 	st_font = pygame.font.SysFont(pygame.font.get_default_font(), 36)
 	play = 0
 	quit = 0
-	
+
 	#Title
 	title = t_font.render("Welcome to a pong game", 1, white)
 	title_rect = title.get_rect()
 	title_rect.center = [width/2, 2*height/5]
-	
+
 	#Play
 	pl_po = st_font.render("PLAY", 1, white)
 	pl_po_rect = pl_po.get_rect()
 	pl_po_rect.center = [width/2, 3*height/5]
-	
+
 	#Quit
 	qu_po = st_font.render("QUIT", 1, white)
 	qu_po_rect = qu_po.get_rect()
 	qu_po_rect.center = [width/2, 4*height/5]
-	
+
 	screen.fill(black)
 	screen.blit(title, title_rect)
 	screen.blit(pl_po, pl_po_rect)
 	screen.blit(qu_po, qu_po_rect)
 	pygame.display.flip()
-	
+
 	while 1:
 		for event in pygame.event.get():
 			if event.type is pygame.QUIT:
@@ -49,10 +49,15 @@ def disp_title_screen(screen, width, height):
 
 #Bug when renormalizing vectors
 def bounce(player, ball, speed):
-	o = (player.centerx - ball.centerx)/player.h
-	print(o)
-	a = math.cos(math.asin(o))
-	speed = list(map(add, speed, (a, o)))
+	a = (player.centery - ball.centery)/float(player.h)
+	print("p.c.y: %s" % player.centery)
+	print("b.c.y: %s" % ball.centery)
+	print("p.h:   %s" % player.h)
+	print("a:     %s" % a)
+	o = 1**2-a**2
+	speed = list(map(add, speed, (o, a)))
+	hyp = (speed[0]**2 + speed[1]**2)**0.5
+	speed = [(speed[0]/hyp)*4,(speed[1]/hyp)*4]
 	return speed
 
 def calc_traj(angle):
@@ -67,9 +72,9 @@ def calc_new_traj(random, range):
 		z = random.randrange(range[0], range[1], 1)
 		x = 4*math.cos(math.radians(z))
 		y = 4*math.sin(math.radians(z))
-	
+
 	return [x, y]
-	
+
 def driver(basepath, screen, width, height):
 	#General vars used more than once
 	black = 0, 0, 0
@@ -81,7 +86,7 @@ def driver(basepath, screen, width, height):
 	p1_d = 0
 	p2_u = 0
 	p2_d = 0
-	
+
 	#Initialize players
 	pl_img = pygame.image.load(basepath+"player.png").convert()
 	p1 = pl_img.get_rect()
@@ -90,42 +95,42 @@ def driver(basepath, screen, width, height):
 	p2 = pl_img.get_rect()
 	p2_init_pos = p2.x, p2.y =  [width - 2*p2.w, height/2 - p2.h/2]
 	p2_score = 0
-	
+
 	#Initialize ball
 	ball = pygame.image.load(basepath+"new_ball.bmp").convert()
 	ballrect = ball.get_rect()
 	ball_init_pos = [width / 2 - ballrect.w / 2, height /2 + ballrect.h /2]
 	ballrect.left = ball_init_pos[0]
 	ballrect.top = ball_init_pos[1]
-	
+
 	#Initialize ball trajector
 	random.seed(datetime.now())
 	speed = calc_new_traj(random, (0, 359))
-	
+
 	#Initialize context
 	font = pygame.font.SysFont(pygame.font.get_default_font(), 36)
 	p1_show = font.render("Player 1", 1, white)
 	p1_inst = font.render("[w|s] = [up|down]", 1, white)
-	
+
 	p2_show = font.render("Player 2", 1, white)
 	p2_inst = font.render("up down arrow keys", 1, white)
-	
+
 	p1_s_text_pos = p1_show.get_rect()
 	p2_s_text_pos = p2_show.get_rect()
-	
+
 	p1_inst_rect = p1_inst.get_rect()
 	p2_inst_rect = p2_inst.get_rect()
-	
+
 	p1_s_text_pos.centerx = width / 4
 	p1_inst_rect.centerx = p1_s_text_pos.centerx
 	p1_s_text_pos.top = 240
 	p1_inst_rect.top = 300
-	
+
 	p2_s_text_pos.left = 3 * width / 4
 	p2_inst_rect.centerx = p2_s_text_pos.centerx
 	p2_s_text_pos.top = 240
 	p2_inst_rect.top = 300
-	
+
 	#Initialize scoreboard
 	p1_score_pos = [100, 50]
 	p2_score_pos = [width/2+100, 50]
@@ -136,20 +141,20 @@ def driver(basepath, screen, width, height):
 	score4 = font.render("4", 1, white)
 	score5 = font.render("5", 1, white)
 	scores = [score0, score1, score2, score3, score4, score5]
-	
+
 	iter = 0
 	#Go for 5 score
 	while p1_score < 5 and p2_score < 5:
 		#Let player read
 		if iter == 1:
 			pygame.time.delay(5000)
-		
+
 		#Check for movement command
 		for event in pygame.event.get():
 				#Exit if quit
 				if event.type is pygame.QUIT:
 					sys.exit()
-				
+
 				#If player let go of a key, set bool change_pos to 0
 				if event.type is pygame.KEYUP:
 					a = pygame.key.name(event.key)
@@ -161,7 +166,7 @@ def driver(basepath, screen, width, height):
 						p2_u = 0
 					if a == "down":
 						p2_d = 0
-				
+
 				#If player pushed a key, set bool change_pos to 1
 				if event.type is pygame.KEYDOWN:
 					a = pygame.key.name(event.key)
@@ -173,7 +178,7 @@ def driver(basepath, screen, width, height):
 						p2_u = 1
 					if a == "down" and p2.bottom +5 <= height:
 						p2_d = 1
-		
+
 		#Check if either player needs to move
 		#If player has not let up on the key and they can still move
 		if p1_u and p1.top -5 >= 0:
@@ -184,7 +189,7 @@ def driver(basepath, screen, width, height):
 			p2 = p2.move([0, -5])
 		if p2_d and p2.bottom +5 <= height:
 			p2 = p2.move([0, 5])
-		
+
 		#Check the ball
 		if ballrect.left < 0:
 			p2_score += 1
@@ -200,7 +205,7 @@ def driver(basepath, screen, width, height):
 			speed = calc_new_traj(random, (0, 359))
 		if ballrect.top < 0 or ballrect.bottom > height:
 			speed[1] = -speed[1]
-		
+
 		#Simple collision detection is not enough, we must define explicitly
 		if p1.right > ballrect.x or p2.left < ballrect.x+ballrect.width:
 			if p1.collidepoint(ballrect.topleft) or p1.collidepoint(ballrect.bottomleft):
@@ -212,11 +217,11 @@ def driver(basepath, screen, width, height):
 				speed[1] = -speed[1]
 			if ballrect.bottom == p1.top or ballrect.bottom == p2.top:
 				speed[1] = -speed[1]
-		
+
 		#Move
 		if iter is not 0:
 			ballrect = ballrect.move(speed)
-		
+
 		#Write changes
 		screen.fill(black)
 		pygame.draw.rect(screen, white, [width/2 - 15, 0, 30,height])
@@ -231,9 +236,9 @@ def driver(basepath, screen, width, height):
 			screen.blit(p1_inst, p1_inst_rect)
 			screen.blit(p2_inst, p2_inst_rect)
 		pygame.display.flip()
-		
+
 		iter += 1
-	
+
 	#Declare winner
 	if p1_score > p2_score:
 		print('Player 1 wins')
