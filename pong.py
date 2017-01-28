@@ -50,10 +50,6 @@ def disp_title_screen(screen, width, height):
 #Bug when renormalizing vectors
 def bounce(player, ball, speed):
 	a = (player.centery - ball.centery)/float(player.h)
-	print("p.c.y: %s" % player.centery)
-	print("b.c.y: %s" % ball.centery)
-	print("p.h:   %s" % player.h)
-	print("a:     %s" % a)
 	o = 1**2-a**2
 	speed = list(map(add, speed, (o, a)))
 	hyp = (speed[0]**2 + speed[1]**2)**0.5
