@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import pygame, sys, random
 import math
 from datetime import datetime
@@ -223,7 +224,7 @@ def driver(basepath, screen, width, height):
 		pygame.draw.rect(screen, white, [width/2 - 15, 0, 30,height])
 		screen.blit(ball, ballrect)
 		screen.blit(pl_img, p1)
-		screen.blit(pl_img, p2)
+		screen.blit(pl_img, p1)
 		screen.blit(scores[p1_score], p1_score_pos)
 		screen.blit(scores[p2_score], p2_score_pos)
 		if iter == 0:

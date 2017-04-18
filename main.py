@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import pygame, sys, os
 from pong import driver
 from pong import disp_title_screen
